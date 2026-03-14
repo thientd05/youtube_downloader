@@ -19,11 +19,30 @@ def download():
         return jsonify({"error": "Thiếu URL"}), 400
 
     ydl_opts = {
-        "format": "18/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
+        # Thử nhiều format, ưu tiên format có sẵn cả video+audio
+        "format": "18/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
         "merge_output_format": "mp4",
         "outtmpl": f"{DOWNLOAD_DIR}/%(title)s.%(ext)s",
-        # Trả về đường dẫn file sau khi tải
         "noplaylist": True,
+
+        # Giả lập trình duyệt thật để tránh 403
+        "http_headers": {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0.0.0 Safari/537.36"
+            ),
+        },
+
+        # Thêm extractor args để bypass
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "web"],
+            }
+        },
+
+        "retries": 5,
+        "ignoreerrors": False,
     }
 
     try:
