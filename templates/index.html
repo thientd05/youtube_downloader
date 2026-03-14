@@ -14,7 +14,10 @@
 <body>
   <h2>YouTube Downloader</h2>
   <input type="text" id="url" placeholder="Dán link YouTube vào đây...">
-  <button onclick="startDownload()">Tải xuống</button>
+  <div style="display: flex; gap: 8px; margin: 10px 0;">
+    <button onclick="startDownload()">Tải xuống</button>
+    <button onclick="clearInput()" style="background: #757575;">Xóa</button>
+  </div>
   <div id="status"></div>
 
   <script>
@@ -50,6 +53,12 @@
         status.textContent = "Lỗi kết nối: " + e.message;
       }
     }
+
+    function clearInput() {
+    document.getElementById("url").value = "";
+    document.getElementById("status").textContent = "";
+    document.getElementById("url").focus();
+  }
   </script>
 </body>
 </html>
