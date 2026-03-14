@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Downloader</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; }
+    input { width: 100%; padding: 10px; font-size: 16px; margin: 10px 0; box-sizing: border-box; }
+    button { padding: 10px 24px; font-size: 16px; background: #e53935; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    #status { margin-top: 16px; color: #555; }
+  </style>
+</head>
+<body>
+  <h2>YouTube Downloader</h2>
+  <input type="text" id="url" placeholder="Dán link YouTube vào đây...">
+  <button onclick="startDownload()">Tải xuống</button>
+  <div id="status"></div>
+
+  <script>
+    async function startDownload() {
+      const url = document.getElementById("url").value.trim();
+      const status = document.getElementById("status");
+
+      if (!url) { status.textContent = "Vui lòng nhập URL!"; return; }
+
+      status.textContent = "Đang tải... vui lòng chờ (có thể mất 30-60 giây)";
+
+      try {
+        const res = await fetch("/download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          status.textContent = "Lỗi: " + err.error;
+          return;
+        }
+
+        // Tự động tải file về máy người dùng
+        const blob = await res.blob();
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "video.mp4";
+        a.click();
+        status.textContent = "Tải xong!";
+      } catch (e) {
+        status.textContent = "Lỗi kết nối: " + e.message;
+      }
+    }
+  </script>
+</body>
+</html>
